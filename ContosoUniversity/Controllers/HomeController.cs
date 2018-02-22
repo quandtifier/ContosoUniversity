@@ -22,13 +22,21 @@ namespace ContosoUniversity.Controllers
              * LINQ statement groups the students by enrollment date, calculates the numnber of students in
              * each group and stores the results in a collection EnrollmentDateGroup
              */
-            IQueryable<EnrollmentDateGroup> data = from student in db.Students
-                                                   group student by student.EnrollmentDate into dateGroup
-                                                   select new EnrollmentDateGroup()
-                                                   {
-                                                       EnrollmentDate = dateGroup.Key,
-                                                       StudentCount = dateGroup.Count()
-                                                   };
+            // commented out to show raw sql query
+            //IQueryable<EnrollmentDateGroup> data = from student in db.Students
+            //                                       group student by student.EnrollmentDate into dateGroup
+            //                                       select new EnrollmentDateGroup()
+            //                                       {
+            //                                           EnrollmentDate = dateGroup.Key,
+            //                                           StudentCount = dateGroup.Count()
+            //                                       };
+
+            // SQL version of the LINQ code
+            // differs from tutorial because inheritance was never implemented
+            string query = "SELECT EnrollmentDate, COUNT(*) AS StudentCount "
+                + "FROM Student "
+                + "GROUP BY EnrollmentDate";
+            IEnumerable<EnrollmentDateGroup> data = db.Database.SqlQuery<EnrollmentDateGroup>(query);
             return View(data.ToList());
         }
 
